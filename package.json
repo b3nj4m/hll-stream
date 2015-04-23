@@ -4,7 +4,7 @@
   "description": "Stream-based Hyper Log Log implementation",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/b3nj4m/hll-stream/issues"
   },
-  "homepage": "https://github.com/b3nj4m/hll-stream"
+  "homepage": "https://github.com/b3nj4m/hll-stream",
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "mocha": "^2.2.4"
+  }
 }
