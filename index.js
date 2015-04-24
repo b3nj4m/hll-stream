@@ -4,7 +4,7 @@ var rawEstimateData = require('./rawEstimateData.json');
 var biasData = require('./biasData.json');
 var thresholdData = require('./thresholdData.json');
 
-var MAX_INT_BITS = 31;
+var MAX_INT_BITS = 32;
 var MAX_INT_BYTES = Math.ceil(MAX_INT_BITS / 8);
 
 function HLL(precision, hashType) {
@@ -81,7 +81,7 @@ HLL.prototype.cardinality = function() {
   var estimate = (this.alpha * this.registersSize * this.registersSize) / sum;
 
   if (estimate <= 5 * this.registersSize) {
-    return estimate - this.estimateBias(estimate);
+    estimate = estimate - this.estimateBias(estimate);
   }
 
   var zeros = this.numZeros();
