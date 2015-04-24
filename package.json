@@ -12,6 +12,8 @@
   },
   "keywords": [
     "hyperloglog",
+    "stream",
+    "cardinality",
     "hll"
   ],
   "author": "Ben Robbins <ben.robbins@gmail.com> (https://b3nj4m.com/)",

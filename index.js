@@ -44,7 +44,7 @@ HLL.prototype.write = function(chunk, enc, next) {
 
   var estimatorBits = MAX_INT_BITS - this.precision;
   var i;
-  var mask = 1 << estimatorBits;
+  var mask = 1 << (estimatorBits - 1);
 
   for (i = 0; i < estimatorBits; i++) {
     if ((estimator & mask) !== 0) {
