@@ -7,8 +7,8 @@ var thresholdData = require('./thresholdData.json');
 var MAX_INT_BITS = 32;
 var MAX_INT_BYTES = Math.ceil(MAX_INT_BITS / 8);
 
-function HLL(precision, hashType) {
-  Stream.Writable.call(this);
+function HLL(precision, hashType, streamOpts) {
+  Stream.Writable.call(this, streamOpts);
 
   this.precision = Math.min(16, Math.max(4, precision || 4));
   this.hashType = hashType || 'sha1';
@@ -35,7 +35,7 @@ HLL.prototype.alphaTable = {
 
 HLL.prototype.write = function(chunk, enc, next) {
   if (!Buffer.isBuffer(chunk)) {
-    chunk = new Buffer(chunk);
+    chunk = new Buffer([chunk]);
   }
 
   var hash = parseInt(crypto.createHash(this.hashType).update(chunk).digest().slice(0, MAX_INT_BYTES).toString('hex'), 16);
