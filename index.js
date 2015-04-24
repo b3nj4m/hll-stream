@@ -33,10 +33,6 @@ HLL.prototype.alphaTable = {
   }
 };
 
-HLL.prototype.end = function() {
-  this.emit('finish');
-};
-
 HLL.prototype.write = function(chunk, enc, next) {
   if (!Buffer.isBuffer(chunk)) {
     chunk = new Buffer(chunk);
