@@ -11,7 +11,7 @@ var hll = new Hll(8);
 
 myDataSource.pipe(hll);
 
-hll.on('end', function() {
+hll.on('finish', function() {
   console.log(hll.cardinality());
 });
 ```
