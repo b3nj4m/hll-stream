@@ -34,10 +34,6 @@ HLL.prototype.alphaTable = {
 };
 
 HLL.prototype.write = function(chunk, enc, next) {
-  if (!Buffer.isBuffer(chunk)) {
-    chunk = new Buffer([chunk]);
-  }
-
   var hash = parseInt(crypto.createHash(this.hashType).update(chunk).digest().slice(0, MAX_INT_BYTES).toString('hex'), 16);
   var idx = hash & (this.registersSize - 1);
   var estimator = hash >> this.precision;

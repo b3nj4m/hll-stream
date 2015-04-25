@@ -1,10 +1,10 @@
 {
   "name": "hll-stream",
   "version": "0.1.0",
-  "description": "Stream-based Hyper Log Log implementation",
+  "description": "Stream-based HyperLogLog implementation",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test.js"
+    "test": "mocha test.js --timeout 10000"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 ## hll-stream
 
-Pipe in your stream of buffers/ints to get an approximate cardinality (using HyperLogLog).
+Pipe in your stream of buffers/strings to get an approximate cardinality (using HyperLogLog).
 
 ```javascript
 var Hll = require('hll-stream');
