@@ -6,7 +6,7 @@ var Stream = require('stream');
 describe('hll', function() {
   it('should count buffers', function(done) {
     var iterations = 1000000;
-    var h = new HLL(8);
+    var h = new HLL(10);
 
     var rs = new Stream.Readable();
     var i = 0;
@@ -31,7 +31,7 @@ describe('hll', function() {
   });
   it('should count strings', function(done) {
     var iterations = 1000000;
-    var h = new HLL(8);
+    var h = new HLL(10);
 
     var rs = new Stream.Readable();
     var i = 0;
