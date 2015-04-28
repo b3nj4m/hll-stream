@@ -16,6 +16,10 @@ hll.on('finish', function() {
 });
 ```
 
+### Limitations
+
+hll-stream uses 32-bit hash values since node.js won't currently do bit-wise arithmetic on more than 32 bits.
+
 ### API
 
 #### Hll(precision, hashType, streamOpts)

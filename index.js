@@ -4,6 +4,7 @@ var rawEstimateData = require('./rawEstimateData.json');
 var biasData = require('./biasData.json');
 var thresholdData = require('./thresholdData.json');
 
+//currently limited to 32-bit hashes because node won't do bit-wise arithmetic with more than 32 bits.
 var MAX_INT_BITS = 32;
 var MAX_INT_BYTES = Math.ceil(MAX_INT_BITS / 8);
 

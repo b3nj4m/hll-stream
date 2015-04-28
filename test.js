@@ -4,9 +4,9 @@ var expect = require('chai').expect;
 var Stream = require('stream');
 
 describe('hll', function() {
-  it('should count buffers', function(done) {
-    var iterations = 1000000;
-    var h = new HLL(10);
+  it('should count about 10,000,000 buffers', function(done) {
+    var iterations = 10000000;
+    var h = new HLL(12);
 
     var rs = new Stream.Readable();
     var i = 0;
@@ -29,9 +29,9 @@ describe('hll', function() {
 
     rs.pipe(h);
   });
-  it('should count strings', function(done) {
-    var iterations = 1000000;
-    var h = new HLL(10);
+  it('should count about 10,000,000 strings', function(done) {
+    var iterations = 10000000;
+    var h = new HLL(12);
 
     var rs = new Stream.Readable();
     var i = 0;
