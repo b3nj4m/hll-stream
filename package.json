@@ -4,7 +4,7 @@
   "description": "Stream-based HyperLogLog implementation",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test.js --timeout 100000"
+    "test": "mocha test.js --timeout 5000000"
   },
   "repository": {
     "type": "git",
