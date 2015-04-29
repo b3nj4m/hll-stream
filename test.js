@@ -3,6 +3,9 @@ var HLL = require('./index');
 var expect = require('chai').expect;
 var Stream = require('stream');
 
+var totalError = 0;
+var totalTests = 0;
+
 function test(iterations, precision) {
   ['buffers', 'strings'].forEach(function(type) {
     it('should count about ' + iterations + ' ' + type + ' using precision ' + precision, function(done) {
@@ -12,22 +15,26 @@ function test(iterations, precision) {
 
       if (type === 'buffers') {
         rs._read = function() {
-          if (i < iterations) {
+          var pushed = true;
+          //fill buffer
+          while (pushed && i < iterations) {
             var buf = new Buffer(4);
             buf.writeInt32LE(i++);
-            return this.push(buf);
+            pushed = this.push(buf);
           }
-          else {
+          if (pushed && i >= iterations) {
             return this.push(null);
           }
         };
       }
       else if (type === 'strings') {
         rs._read = function() {
-          if (i < iterations) {
-            return this.push((i++).toString());
+          var pushed = true;
+          //fill buffer
+          while (pushed && i < iterations) {
+            pushed = this.push((i++).toString());
           }
-          else {
+          if (pushed && i >= iterations) {
             return this.push(null);
           }
         };
@@ -35,7 +42,12 @@ function test(iterations, precision) {
 
       h.on('finish', function() {
         var cardinality = h.cardinality();
-        expect(Math.abs(cardinality - iterations)).to.be.below(iterations * 0.1);
+        var error = Math.abs(cardinality - iterations);
+
+        totalError += error / iterations;
+        totalTests++;
+
+        expect(error).to.be.below(iterations * 0.20);
         done();
       });
 
@@ -45,12 +57,11 @@ function test(iterations, precision) {
 }
 
 describe('hll', function() {
-  test(10, 4);
-  test(100, 6);
-  test(1000, 8);
-  test(10000, 8);
-  test(100000, 10);
-  test(1000000, 12);
-  test(10000000, 14);
-  test(100000000, 16);
+  for (var i = 1; i < 20; i++) {
+    test(i * Math.pow(2, i), Math.max(4, Math.min(16, i + 1)));
+  }
+
+  it('should have average error below 5%', function() {
+    expect(totalError / totalTests).to.be.below(0.05);
+  });
 });

@@ -14,6 +14,7 @@ function HLL(precision, hashType, streamOpts) {
   this.precision = Math.min(16, Math.max(4, precision || 4));
   this.hashType = hashType || 'sha1';
   this.registersSize = 1 << this.precision;
+  this.idxMask = this.registersSize - 1;
   this.registers = new Array(this.registersSize);
   this.alpha = (this.alphaTable[this.precision] || this.alphaTable.default)(this.precision);
 
@@ -36,21 +37,11 @@ HLL.prototype.alphaTable = {
 
 HLL.prototype.write = function(chunk, enc, next) {
   var hash = crypto.createHash(this.hashType).update(chunk).digest().readIntLE(0, MAX_INT_BYTES);
-  var idx = hash & (this.registersSize - 1);
-  var estimator = hash >> this.precision;
-
+  var idx = hash & this.idxMask;
+  var estimator = hash >>> this.precision;
   var estimatorBits = MAX_INT_BITS - this.precision;
-  var i;
-  var mask = 1 << (estimatorBits - 1);
 
-  for (i = 0; i < estimatorBits; i++) {
-    if ((estimator & mask) !== 0) {
-      break;
-    }
-    mask = mask >> 1;
-  }
-
-  this.registers[idx] = Math.max(this.registers[idx], i + 1);
+  this.registers[idx] = Math.max(this.registers[idx], estimatorBits - (estimator === 0 ? 0 : Math.ceil(Math.log2(estimator))) + 1);
 
   if (next) {
     next();
@@ -92,10 +83,10 @@ HLL.prototype.cardinality = function() {
   }
 
   if (thresholdMetric <= thresholdData[this.precision - 4]) {
-    return thresholdMetric;
+    estimate = thresholdMetric;
   }
 
-  return estimate;
+  return Math.round(estimate);
 };
 
 HLL.prototype.estimateBias = function(estimate) {
