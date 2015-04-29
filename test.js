@@ -57,11 +57,47 @@ function test(iterations, precision) {
 }
 
 describe('hll', function() {
-  for (var i = 1; i < 20; i++) {
-    test(i * Math.pow(2, i), Math.max(4, Math.min(16, i + 1)));
-  }
+  describe('precision', function() {
+    it('should have min precision of 4', function() {
+      var hll = new HLL(2);
+      expect(hll.precision).to.be.equal(4);
+    });
 
-  it('should have average error below 5%', function() {
-    expect(totalError / totalTests).to.be.below(0.05);
+    it('should have max precision of 16', function() {
+      var hll = new HLL(18);
+      expect(hll.precision).to.be.equal(16);
+    });
+  });
+
+  describe('registers', function() {
+    it('should have 2^precision registers', function() {
+      var hll = new HLL(4);
+      expect(hll.registers.length).to.be.equal(16);
+      hll = new HLL(5);
+      expect(hll.registers.length).to.be.equal(32);
+      hll = new HLL(6);
+      expect(hll.registers.length).to.be.equal(64);
+      hll = new HLL(8);
+      expect(hll.registers.length).to.be.equal(256);
+      hll = new HLL(16);
+      expect(hll.registers.length).to.be.equal(65536);
+    });
+
+    it('should have zeroed registers', function() {
+      var hll = new HLL(4);
+      for (var i = 0; i < hll.registers.length; i++) {
+        expect(hll.registers[i]).to.be.equal(0);
+      }
+    });
+  });
+
+  describe('cardinality', function() {
+    for (var i = 1; i < 20; i++) {
+      test(i * Math.pow(2, i), Math.max(4, Math.min(16, i + 1)));
+    }
+
+    it('should have average error below 5%', function() {
+      expect(totalError / totalTests).to.be.below(0.05);
+    });
   });
 });
