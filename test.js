@@ -3,9 +3,6 @@ var HLL = require('./index');
 var expect = require('chai').expect;
 var Stream = require('stream');
 
-var totalError = 0;
-var totalTests = 0;
-
 function test(iterations, precision) {
   ['buffers', 'strings'].forEach(function(type) {
     it('should count about ' + iterations + ' ' + type + ' using precision ' + precision, function(done) {
@@ -44,10 +41,7 @@ function test(iterations, precision) {
         var cardinality = h.cardinality();
         var error = Math.abs(cardinality - iterations);
 
-        totalError += error / iterations;
-        totalTests++;
-
-        expect(error).to.be.below(iterations * 0.20);
+        expect(error).to.be.below(iterations * (2 / Math.sqrt(h.registersSize)));
         done();
       });
 
@@ -92,12 +86,8 @@ describe('hll', function() {
   });
 
   describe('cardinality', function() {
-    for (var i = 1; i < 20; i++) {
-      test(i * Math.pow(2, i), Math.max(4, Math.min(16, i + 1)));
+    for (var i = 4; i < 17; i++) {
+      test(i * Math.pow(2, i + 3), Math.max(4, Math.min(16, i)));
     }
-
-    it('should have average error below 5%', function() {
-      expect(totalError / totalTests).to.be.below(0.05);
-    });
   });
 });
