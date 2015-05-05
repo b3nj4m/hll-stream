@@ -15,6 +15,7 @@ function HLL(precision, hashType, streamOpts) {
   this.hashType = hashType || 'sha1';
   this.registersSize = 1 << this.precision;
   this.idxMask = this.registersSize - 1;
+  this.estimatorBits = MAX_INT_BITS - this.precision;
   this.registers = new Array(this.registersSize);
   this.alpha = (this.alphaTable[this.precision] || this.alphaTable.default)(this.precision);
 
@@ -39,9 +40,8 @@ HLL.prototype.write = function(chunk, enc, next) {
   var hash = crypto.createHash(this.hashType).update(chunk).digest().readIntLE(0, MAX_INT_BYTES);
   var idx = hash & this.idxMask;
   var estimator = hash >>> this.precision;
-  var estimatorBits = MAX_INT_BITS - this.precision;
 
-  this.registers[idx] = Math.max(this.registers[idx], estimatorBits - (estimator === 0 ? 0 : Math.ceil(Math.log2(estimator))) + 1);
+  this.registers[idx] = Math.max(this.registers[idx], this.estimatorBits - (estimator === 0 ? 0 : Math.ceil(Math.log2(estimator))) + 1);
 
   if (next) {
     next();
