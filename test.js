@@ -41,7 +41,7 @@ function test(iterations, precision) {
         var cardinality = h.cardinality();
         var error = Math.abs(cardinality - iterations);
 
-        expect(error).to.be.below(iterations * (2 / Math.sqrt(h.registersSize)));
+        expect(error).to.be.at.most(iterations * (2 / Math.sqrt(h.registersSize)));
         done();
       });
 
