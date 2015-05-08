@@ -33,3 +33,28 @@ Construct a new writable Hll (extends [`Stream.Writable`](https://nodejs.org/api
 #### Hll.cardinality()
 
 Compute the approximate cardinality.
+
+#### Hll.merge(hll)
+
+Merge another Hll with this one. The two Hlls must have the same `hashType` and `precision`. Returns a new Hll.
+
+* `hll` - another instance of `hll-stream` to merge with this one.
+
+#### Hll.export()
+
+Export the Hll's data. Returns an object like:
+
+```javascript
+{
+  precision: 8,
+  hashType: 'sha1',
+  registers: [...]
+}
+```
+
+### Hll.import(data)
+
+Import Hll data (as exported by `export()`). Replaces any pre-existing data.
+
+* `data` - the data object to import. Should be in the same format as exported by `export()`.
+

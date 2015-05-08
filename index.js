@@ -13,11 +13,8 @@ function HLL(precision, hashType, streamOpts) {
 
   this.precision = Math.min(16, Math.max(4, precision || 4));
   this.hashType = hashType || 'sha1';
-  this.registersSize = 1 << this.precision;
-  this.idxMask = this.registersSize - 1;
-  this.estimatorBits = MAX_INT_BITS - this.precision;
+  this.computeConstants();
   this.registers = new Array(this.registersSize);
-  this.alpha = (this.alphaTable[this.precision] || this.alphaTable.default)(this.precision);
 
   for (var i = 0; i < this.registers.length; i++) {
     this.registers[i] = 0;
@@ -34,6 +31,13 @@ HLL.prototype.alphaTable = {
   'default': function(precision) {
     return 0.7213 / (1 + (1.079 / (1 << precision)));
   }
+};
+
+HLL.prototype.computeConstants = function() {
+  this.registersSize = 1 << this.precision;
+  this.idxMask = this.registersSize - 1;
+  this.estimatorBits = MAX_INT_BITS - this.precision;
+  this.alpha = (this.alphaTable[this.precision] || this.alphaTable.default)(this.precision);
 };
 
 HLL.prototype.write = function(chunk, enc, next) {
@@ -109,6 +113,39 @@ HLL.prototype.estimateBias = function(estimate) {
   }
 
   return bias / closestEstimates.length;
+};
+
+HLL.prototype.merge = function(hll) {
+  if (hll.precision !== this.precision) {
+    throw Error('precisions of the HLLs must match');
+  }
+
+  if (hll.hashType !== this.hashType) {
+    throw Error('hashTypes of the HLLs must match');
+  }
+
+  var result = new HLL(this.precision, this.hashType);
+
+  for (var i = 0; i < hll.registers.length; i++) {
+    result.registers[i] = Math.max(this.registers[i], hll.registers[i]);
+  }
+
+  return result;
+};
+
+HLL.prototype.export = function() {
+  return {
+    hashType: this.hashType,
+    precision: this.precision,
+    registers: this.registers.slice()
+  };
+};
+
+HLL.prototype.import = function(data) {
+  this.hashType = data.hashType;
+  this.precision = data.precision;
+  this.registers = data.registers;
+  this.computeConstants();
 };
 
 module.exports = HLL;
