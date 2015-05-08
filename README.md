@@ -52,7 +52,7 @@ Export the Hll's data. Returns an object like:
 }
 ```
 
-### Hll.import(data)
+#### Hll.import(data)
 
 Import Hll data (as exported by `export()`). Replaces any pre-existing data.
 
