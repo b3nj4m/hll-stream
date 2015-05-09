@@ -144,7 +144,7 @@ HLL.prototype.export = function() {
 HLL.prototype.import = function(data) {
   this.hashType = data.hashType;
   this.precision = data.precision;
-  this.registers = data.registers;
+  this.registers = data.registers.slice();
   this.computeConstants();
 };
 
