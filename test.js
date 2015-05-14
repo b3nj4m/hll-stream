@@ -17,7 +17,7 @@ function makeHll(iterations, precision, hashType, type, callback) {
         buf.writeInt32LE(i++);
         pushed = this.push(buf);
       }
-      if (pushed && i >= iterations) {
+      if (pushed) {
         return this.push(null);
       }
     };

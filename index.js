@@ -38,9 +38,11 @@ HLL.prototype.computeConstants = function() {
   this.idxMask = this.registersSize - 1;
   this.estimatorBits = MAX_INT_BITS - this.precision;
   this.alpha = (this.alphaTable[this.precision] || this.alphaTable.default)(this.precision);
+  this.nextCounter = 0;
+  this.nextLimit = 1000;
 };
 
-HLL.prototype.write = function(chunk, enc, next) {
+HLL.prototype._write = function(chunk, enc, next) {
   var hash = crypto.createHash(this.hashType).update(chunk).digest().readIntLE(0, MAX_INT_BYTES);
   var idx = hash & this.idxMask;
   var estimator = hash >>> this.precision;
@@ -48,7 +50,13 @@ HLL.prototype.write = function(chunk, enc, next) {
   this.registers[idx] = Math.max(this.registers[idx], this.estimatorBits - (estimator === 0 ? 0 : Math.ceil(Math.log2(estimator))) + 1);
 
   if (next) {
-    next();
+    this.nextCounter = (this.nextCounter + 1) % this.nextLimit;
+    if (this.nextCounter === 0) {
+      setTimeout(next, 0);
+    }
+    else {
+      next();
+    }
   }
 
   return true;
