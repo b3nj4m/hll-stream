@@ -4,12 +4,14 @@ Pipe in your stream of buffers/strings to get an approximate cardinality (using 
 
 ```javascript
 var Hll = require('hll-stream');
+var es = require('event-stream');
+var fs = require('fs');
 
 var hll = new Hll(8);
 
-//...
-
-myDataSource.pipe(hll);
+fs.createReadStream('data.txt')
+  .pipe(es.split())
+  .pipe(hll);
 
 hll.on('finish', function() {
   console.log(hll.cardinality());
